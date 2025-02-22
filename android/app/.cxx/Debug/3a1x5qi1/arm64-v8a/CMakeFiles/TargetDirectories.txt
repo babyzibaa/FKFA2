@@ -1,0 +1,2 @@
+C:/Users/jappa/StudioProjects/FKFA2/android/app/.cxx/Debug/3a1x5qi1/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/jappa/StudioProjects/FKFA2/android/app/.cxx/Debug/3a1x5qi1/arm64-v8a/CMakeFiles/rebuild_cache.dir
