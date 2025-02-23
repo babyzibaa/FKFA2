@@ -22,10 +22,10 @@ class User(db.Model):
 
 class FeedPost(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.String(255), ForeignKey('user.id'), nullable=False)
     username = db.Column(db.String(100), nullable=False)
     activity = db.Column(db.String(255), nullable=False)
-    streak = db.Column(db.Integer, nullable=False, default=0)
+    streak = db.Column(db.String(255), nullable=False, default='0')
     profile_picture = db.Column(db.String(255), nullable=True)  # Only stores filename
     activity_image = db.Column(db.String(255), nullable=True)   # Only stores filename
 
