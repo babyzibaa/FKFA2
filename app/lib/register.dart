@@ -66,142 +66,142 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Bubblier "task buddies" Header
-              Column(
+        body: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "task",
-                    style: GoogleFonts.poppins(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal[800],
-                      letterSpacing: 1.5,
-                      shadows: [
-                        Shadow(
-                          color: Colors.teal[300]!,
-                          blurRadius: 5,
-                          offset: Offset(2, 2),
+                  // Bubblier "task buddies" Header
+                  Column(
+                    children: [
+                      Text(
+                        "task",
+                        style: GoogleFonts.poppins(
+                          fontSize: 50,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal[800],
+                          letterSpacing: 1.5,
+                          shadows: [
+                            Shadow(
+                              color: Colors.teal[300]!,
+                              blurRadius: 5,
+                              offset: Offset(2, 2),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                      Text(
+                        "buddies",
+                        style: GoogleFonts.poppins(
+                          fontSize: 65,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal[800],
+                          letterSpacing: 2,
+                          shadows: [
+                            Shadow(
+                              color: Colors.teal[400]!,
+                              blurRadius: 6,
+                              offset: Offset(2, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+
+                  // Name Field (Updated from Username)
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(5)),
+                    child: TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(border: InputBorder.none, hintText: "Name"), // Updated label
                     ),
                   ),
+                  SizedBox(height: 10),
+
+                  // Email Field
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(5)),
+                    child: TextField(
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(border: InputBorder.none, hintText: "Email"),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+
+                  // Password Field
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(5)),
+                    child: TextField(
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: InputDecoration(border: InputBorder.none, hintText: "Password"),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+
+                  // Confirm Password Field
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(5)),
+                    child: TextField(
+                      controller: confirmPasswordController,
+                      obscureText: true,
+                      decoration: InputDecoration(border: InputBorder.none, hintText: "Confirm Password"),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+
+                  // Show Error Message
+                  if (errorMessage.isNotEmpty)
+                    Text(errorMessage, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+
+                  // Register Button
+                  SizedBox(height: 10),
+                  isLoading
+                      ? CircularProgressIndicator()
+                      : ElevatedButton(
+                    onPressed: registerUser,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal[800],
+                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                    ),
+                    child: Text("Register", style: TextStyle(color: Colors.white)),
+                  ),
+
+                  SizedBox(height: 15),
+
+                  // Back to Login
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Already have an account? Login", style: TextStyle(color: Colors.teal[800])),
+                  ),
+
+                  SizedBox(height: 30),
+
+                  // Motivational Tagline
                   Text(
-                    "buddies",
+                    "friends keep friends accountable",
                     style: GoogleFonts.poppins(
-                      fontSize: 65,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal[800],
-                      letterSpacing: 2,
-                      shadows: [
-                        Shadow(
-                          color: Colors.teal[400]!,
-                          blurRadius: 6,
-                          offset: Offset(2, 2),
-                        ),
-                      ],
+                      fontStyle: FontStyle.italic,
+                      fontSize: 18,
+                      color: Colors.teal[700],
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 20),
-
-              // Name Field (Updated from Username)
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(5)),
-                child: TextField(
-                  controller: nameController,
-                  decoration: InputDecoration(border: InputBorder.none, hintText: "Name"), // Updated label
-                ),
-              ),
-              SizedBox(height: 10),
-
-              // Email Field
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(5)),
-                child: TextField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(border: InputBorder.none, hintText: "Email"),
-                ),
-              ),
-              SizedBox(height: 10),
-
-              // Password Field
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(5)),
-                child: TextField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(border: InputBorder.none, hintText: "Password"),
-                ),
-              ),
-              SizedBox(height: 10),
-
-              // Confirm Password Field
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(5)),
-                child: TextField(
-                  controller: confirmPasswordController,
-                  obscureText: true,
-                  decoration: InputDecoration(border: InputBorder.none, hintText: "Confirm Password"),
-                ),
-              ),
-              SizedBox(height: 10),
-
-              // Show Error Message
-              if (errorMessage.isNotEmpty)
-                Text(errorMessage, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-
-              // Register Button
-              SizedBox(height: 10),
-              isLoading
-                  ? CircularProgressIndicator()
-                  : ElevatedButton(
-                onPressed: registerUser,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal[800],
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                ),
-                child: Text("Register", style: TextStyle(color: Colors.white)),
-              ),
-
-              SizedBox(height: 15),
-
-              // Back to Login
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text("Already have an account? Login", style: TextStyle(color: Colors.teal[800])),
-              ),
-
-              SizedBox(height: 30),
-
-              // Motivational Tagline
-              Text(
-                "friends keep friends accountable",
-                style: GoogleFonts.poppins(
-                  fontStyle: FontStyle.italic,
-                  fontSize: 18,
-                  color: Colors.teal[700],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
-    )
+        )
     );
   }
 }

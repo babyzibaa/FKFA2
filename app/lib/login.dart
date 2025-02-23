@@ -1,3 +1,4 @@
+import 'package:fkfa2/working.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -39,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
       errorMessage = "";
     });
 
-    final url = Uri.parse('http://10.40.167.242:5000/auth/login'); // Replace with your server URL
+    final url = Uri.parse('${baseUrl}/auth/login'); // Replace with your server URL
 
     try {
       final response = await http.post(
@@ -53,10 +54,7 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         // Success: Navigate to Home Page
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
+        Navigator.pop(context);
       } else {
         // Failure: Show error message
         setState(() {
