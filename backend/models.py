@@ -1,16 +1,24 @@
+import bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, Integer, CheckConstraint
 from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
 
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
-    profile_picture = db.Column(db.String(255), nullable=True)  # Stores filename
+    password_hash = db.Column(db.String(255), nullable=False)  # Store hashed password
+    profile_picture = db.Column(db.String(255), nullable=True)
+
+    def set_password(self, password):
+        """Hash and set the user's password"""
+        self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+    def check_password(self, password):
+        """Verify the user's password"""
+        return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
 
     def to_dict(self):
         return {
@@ -19,6 +27,7 @@ class User(db.Model):
             "email": self.email,
             "profile_picture": f"/uploads/{self.profile_picture}" if self.profile_picture else None
         }
+
 
 class FeedPost(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

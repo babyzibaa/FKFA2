@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify
+import bcrypt
 from models import db, User
 
 auth_routes = Blueprint('auth_routes', __name__)
 
-# REGISTER: Create a new user (No Hashing)
+# REGISTER: Create a new user (with password hashing)
 @auth_routes.route('/register', methods=['POST'])
 def register():
     data = request.json
@@ -18,21 +19,22 @@ def register():
     if User.query.filter_by(email=email).first():
         return jsonify({"error": "Email already registered"}), 400
 
-    new_user = User(name=name, email=email, password=password)  # Storing plain-text password
+    new_user = User(name=name, email=email)
+    new_user.set_password(password)  # Hash the password
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"message": "User registered successfully", "user": new_user.to_dict()}), 201
+    return jsonify({"message": "User registered successfully"}), 201
 
-# LOGIN: Authenticate user (No Hashing)
+# LOGIN: Authenticate user (with password verification)
 @auth_routes.route('/login', methods=['POST'])
 def login():
     data = request.json
     email = data.get("email")
     password = data.get("password")
 
-    user = User.query.filter_by(email=email, password=password).first()
-    if not user:
+    user = User.query.filter_by(email=email).first()
+    if not user or not user.check_password(password):
         return jsonify({"error": "Invalid email or password"}), 401
 
     return jsonify({"message": "Login successful", "user": user.to_dict()})
