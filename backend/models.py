@@ -4,23 +4,29 @@ from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
 
-# User Model
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False)
-    profile_picture = db.Column(db.String(255), nullable=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    profile_picture = db.Column(db.String(255), nullable=True)  # Stores filename
 
     def to_dict(self):
-        return {"id": self.id, "name": self.name, "profile_picture": self.profile_picture}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "profile_picture": f"/uploads/{self.profile_picture}" if self.profile_picture else None
+        }
 
-# FeedPost Model
 class FeedPost(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(100), nullable=False)
     activity = db.Column(db.String(255), nullable=False)
     streak = db.Column(db.Integer, nullable=False, default=0)
     profile_picture = db.Column(db.String(255), nullable=True)
-    activity_image = db.Column(db.String(255), nullable=True)
+    activity_image = db.Column(db.String(255), nullable=True)  # Stores filename
 
     def to_dict(self):
         return {
@@ -28,21 +34,19 @@ class FeedPost(db.Model):
             "username": self.username,
             "activity": self.activity,
             "streak": self.streak,
-            "profile_picture": self.profile_picture,
-            "activity_image": self.activity_image
+            "profile_picture": f"/uploads/{self.profile_picture}" if self.profile_picture else None,
+            "activity_image": f"/uploads/{self.activity_image}" if self.activity_image else None
         }
 
-# Reaction Model
+
 class Reaction(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     post_id = db.Column(db.Integer, ForeignKey('feed_post.id'), nullable=False)
     user_id = db.Column(db.Integer, ForeignKey('user.id'), nullable=False)
     emoji_id = db.Column(Integer, nullable=False)
 
-    # Ensure emoji_id is between 0-4
     __table_args__ = (CheckConstraint('emoji_id >= 0 AND emoji_id <= 4', name='valid_emoji_id'),)
 
-    # Relationships
     post = relationship("FeedPost", backref="reactions")
     user = relationship("User", backref="reactions")
 

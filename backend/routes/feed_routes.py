@@ -1,46 +1,32 @@
-from flask import Blueprint, request, jsonify
-from sqlalchemy.orm import joinedload
-from models import db, FeedPost, Reaction
+from flask import Blueprint, request, jsonify, current_app
+from werkzeug.utils import secure_filename
+import os
+from models import db, FeedPost
 
 feed_routes = Blueprint('feed_routes', __name__)
 
-# GET: Fetch all posts with reactions (no counters, just raw reaction data)
-@feed_routes.route('/feeds', methods=['GET', 'POST'])
-def get_feed_posts():
-    if request.method == 'POST':
-        post = FeedPost(**request.get_json())
-        db.session.add(post)
-        db.session.commit()
-        return jsonify(post.to_dict())
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
-    posts = FeedPost.query.options(joinedload(FeedPost.reactions)).all()
-    response = []
-    for post in posts:
-        response.append({
-            "id": post.id,
-            "username": post.username,
-            "activity": post.activity,
-            "streak": post.streak,
-            "profile_picture": post.profile_picture,
-            "activity_image": post.activity_image,
-        })
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-    return jsonify(response)
+@feed_routes.route('/feeds', methods=['POST'])
+def create_feed_post():
+    data = request.form
+    username = data.get("username")
+    activity = data.get("activity")
+    streak = data.get("streak", 0)
 
+    activity_image = None
+    if "activity_image" in request.files:
+        file = request.files["activity_image"]
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
+            activity_image = filename
 
-@feed_routes.route('/feeds/<int:post_id>', methods=['GET'])
-def get_feed_post_detail(post_id):
-    post = FeedPost.query.first_or_404(post_id)
-    return jsonify(post.to_dict())
+    new_post = FeedPost(username=username, activity=activity, streak=streak, activity_image=activity_image)
+    db.session.add(new_post)
+    db.session.commit()
 
-@feed_routes.route('/feeds/<int:post_id>/reactions', methods=['GET', "POST"])
-def get_feed_post_detail_reactions(post_id):
-    if request.method == "GET":
-        reactions = Reaction.query.where(Reaction.post_id == post_id).all()
-        return jsonify([r.to_dict() for r in reactions])
-    elif request.method == "POST":
-        request_json = request.get_json(force=True)
-        reaction = Reaction(post_id=post_id, emoji_id=request_json['emoji_id'], user_id=0)
-        db.session.add(reaction)
-        db.session.commit()
-        return jsonify(reaction.to_dict())
+    return jsonify({"message": "Post created", "post": new_post.to_dict()}), 201
